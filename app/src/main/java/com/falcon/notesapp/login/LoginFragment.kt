@@ -22,6 +22,12 @@ class LoginFragment : Fragment() {
         binding.signupText.setOnClickListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
+        binding.loginPanel.setOnClickListener {
+            binding.loginButton.visibility = View.GONE
+            binding.animationView.visibility = View.VISIBLE
+            binding.animationView.setAnimation("loading-dots.json")
+            binding.animationView.playAnimation()
+        }
         return binding.root
     }
 
