@@ -19,9 +19,6 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        binding.signupText.setOnClickListener {
-            findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
-        }
         binding.loginPanel.setOnClickListener {
             binding.loginButton.visibility = View.GONE
             binding.animationView.visibility = View.VISIBLE

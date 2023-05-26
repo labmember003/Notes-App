@@ -25,39 +25,17 @@
             android:layout_gravity="center_horizontal"
             android:padding="24dp"
             android:background="@drawable/creatingpage">
-            <LinearLayout
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="35dp"
-
-                    android:text="LOGIN"
-                    android:textColor="#5464F1"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-
-                    ></TextView>
-                <TextView
-                    android:id="@+id/signup_text"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="68dp"
-                    android:text="SIGNUP"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-
-                    ></TextView>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginRight="158dp"
-                android:background="#5464F1"/>
-
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="WELCOME BACK"
+                android:textColor="#5464F1"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                />
 
 
             <ImageView

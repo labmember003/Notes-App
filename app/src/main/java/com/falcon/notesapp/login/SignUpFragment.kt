@@ -21,15 +21,17 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-        binding.loginText.setOnClickListener {
-            findNavController().navigate(R.id.action_SignUpFragment_to_LoginFragment)
-        }
-
         binding.loginPanel.setOnClickListener {
             binding.loginButton.visibility = View.GONE
             binding.animationView.visibility = View.VISIBLE
             binding.animationView.setAnimation("loading-dots.json")
             binding.animationView.playAnimation()
+        }
+        binding.accountExistTxt.setOnClickListener {
+            findNavController().navigate(R.id.action_SignUpFragment_to_LoginFragment)
+        }
+        binding.accountExistTxt2.setOnClickListener {
+            findNavController().navigate(R.id.action_SignUpFragment_to_LoginFragment)
         }
         return binding.root
     }
