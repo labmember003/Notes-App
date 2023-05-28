@@ -53,9 +53,9 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/username"
                 android:background="@drawable/creatingpage"
                 android:padding="8dp"
                 android:hint="Username"
@@ -64,9 +64,9 @@
                 android:drawablePadding="8dp"/>
 
             <EditText
+                android:id="@+id/Email_text"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/Email_text"
                 android:background="@drawable/creatingpage"
                 android:layout_marginTop="20dp"
                 android:padding="8dp"
@@ -75,9 +75,9 @@
                 android:textColor="@color/black"
                 android:drawablePadding="8dp"/>
             <EditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/password"
                 android:background="@drawable/creatingpage"
                 android:layout_marginTop="20dp"
                 android:inputType="textPassword"
@@ -88,6 +88,7 @@
                 android:drawablePadding="8dp"/>
 
             <TextView
+                android:id="@+id/error_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -124,32 +125,39 @@
                     app:lottie_loop="true" />
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/account_exist_txt"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/account_exist_LL"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:textSize="11sp"
-                android:layout_gravity="center"
-                android:text="Already Have an Account ?"
-                android:textColor="@color/lightgrey"
-                style="@style/MaterialAlertDialog.Material3.Body.Text"
-                />
-            <TextView
-                android:id="@+id/account_exist_txt2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="12dp"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:text="Login Here"
-                android:textColor="@color/lightgrey"
-                style="@style/MaterialAlertDialog.Material3.Body.Text"
-                />
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/account_exist_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="12dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:textSize="11sp"
+                    android:layout_gravity="center"
+                    android:text="Already Have an Account ?"
+                    android:textColor="@color/lightgrey"
+                    style="@style/MaterialAlertDialog.Material3.Body.Text"
+                    />
+                <TextView
+                    android:id="@+id/account_exist_txt2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="12dp"
+                    android:textSize="12sp"
+                    android:layout_gravity="center"
+                    android:text="Login Here"
+                    android:textColor="@color/lightgrey"
+                    style="@style/MaterialAlertDialog.Material3.Body.Text"
+                    />
+            </LinearLayout>
+
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,6 +1,6 @@
 package com.falcon.notesapp.models
 
-data class UserRequest(
+data class  UserRequest(
     val email: String,
     val password: String,
     val username: String
