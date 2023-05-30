@@ -12,7 +12,9 @@ import com.falcon.notesapp.R
 import com.falcon.notesapp.databinding.FragmentLoginBinding
 import com.falcon.notesapp.models.UserRequest
 import com.falcon.notesapp.utils.NetworkResult
+import com.falcon.notesapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -20,6 +22,9 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val authViewModel by viewModels<AuthViewModel>()
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +46,7 @@ class LoginFragment : Fragment() {
                 authViewModel.loginUser(getUserRequest())
             } else {
                 binding.errorTextview.text = validateResult.second
+                binding.errorTextview.visibility = View.VISIBLE
             }
         }
         binding.registerNowTxt.setOnClickListener {
@@ -62,7 +68,7 @@ class LoginFragment : Fragment() {
         authViewModel.userResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    //                    Token
+                    tokenManager.saveToken(it.data!!.token)
                     findNavController().navigate(R.id.action_LoginFragment_to_mainFragment)
                 }
                 is NetworkResult.Error -> {

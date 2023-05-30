@@ -16,8 +16,10 @@ import com.falcon.notesapp.databinding.FragmentSignUpBinding
 import com.falcon.notesapp.models.UserRequest
 import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
+import com.falcon.notesapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
@@ -25,11 +27,18 @@ class SignUpFragment : Fragment() {
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
     private val authViewModel by viewModels<AuthViewModel>()
+
+    @Inject
+    lateinit var tokenManager: TokenManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        if (tokenManager.getToken() != null) {
+            findNavController().navigate(R.id.action_SignUpFragment_to_mainFragment)
+        }
         return binding.root
     }
 
@@ -69,7 +78,7 @@ class SignUpFragment : Fragment() {
         authViewModel.userResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-    //                    Token
+                    tokenManager.saveToken(it.data!!.token)
                     findNavController().navigate(R.id.action_SignUpFragment_to_mainFragment)
                 }
                 is NetworkResult.Error -> {
