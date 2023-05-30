@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/custom_color_primary"
+
+    >
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/onBoardingViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/view_pager_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/viewCentreOfNext"/>
+
+    <TextView
+        android:id="@+id/textSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/custom_color_primary"
+        android:text="Skip"
+        />
+    <View
+        android:id="@+id/viewCentreOfNext"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toTopOf="@+id/imageNext"
+        app:layout_constraintBottom_toBottomOf="@+id/imageNext"
+        app:layout_constraintStart_toStartOf="@+id/imageNext"
+        app:layout_constraintEnd_toEndOf="@+id/imageNext"/>
+    
+    <LinearLayout
+        android:id="@+id/indicatorsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+    <ImageView
+        android:id="@+id/imageNext"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/icon_background"
+        android:src="@drawable/ic_right"
+        app:layout_constraintBottom_toTopOf="@+id/buttonGetStarted"
+        android:outlineSpotShadowColor="@color/black"
+        />
+
+
+    <Button
+        android:id="@+id/buttonGetStarted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Started"
+        android:padding="10dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+
+        android:layout_marginBottom="70dp"
+        app:circularflow_radiusInDP="20dp"
+        android:backgroundTint="@color/custom_color_secondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

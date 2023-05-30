@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if(destination.id == R.id.LoginFragment || destination.id == R.id.SignUpFragment) {
+            if(destination.id == R.id.LoginFragment || destination.id == R.id.SignUpFragment || destination.id == R.id.firstFragment) {
                 binding.toolbar.visibility = View.GONE
                 binding.fab.visibility = View.GONE
             } else {

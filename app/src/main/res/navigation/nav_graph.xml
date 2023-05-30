@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/SignUpFragment">
+    app:startDestination="@id/firstFragment">
 
     <fragment
         android:id="@+id/LoginFragment"
@@ -51,4 +51,15 @@
         android:name="com.falcon.notesapp.NoteFragment"
         android:label="fragment_note"
         tools:layout="@layout/fragment_note" />
+    <fragment
+        android:id="@+id/firstFragment"
+        android:name="com.falcon.notesapp.FirstFragment"
+        android:label="FirstFragment" >
+        <action
+            android:id="@+id/action_firstFragment_to_SignUpFragment"
+            app:destination="@id/SignUpFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>
