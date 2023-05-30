@@ -53,7 +53,7 @@
         tools:layout="@layout/fragment_note" />
     <fragment
         android:id="@+id/firstFragment"
-        android:name="com.falcon.notesapp.FirstFragment"
+        android:name="com.falcon.notesapp.WalkThroughFragment"
         android:label="FirstFragment" >
         <action
             android:id="@+id/action_firstFragment_to_SignUpFragment"

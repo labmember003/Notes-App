@@ -14,15 +14,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.falcon.notesapp.adapters.OnBoardingItemAdapter
-import com.falcon.notesapp.databinding.FragmentFirstBinding
+import com.falcon.notesapp.databinding.FragmentWalkThroughBinding
 import com.falcon.notesapp.models.OnBoardingItem
 import com.falcon.notesapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FirstFragment : Fragment() {
-    private var _binding: FragmentFirstBinding? = null
+class WalkThroughFragment : Fragment() {
+    private var _binding: FragmentWalkThroughBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var onBoardingItemAdapter: OnBoardingItemAdapter
@@ -36,7 +36,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentWalkThroughBinding.inflate(inflater, container, false)
         setOnboardingItem()
         setUpIndicators()
         setCurrentIndicator(0)
@@ -51,19 +51,19 @@ class FirstFragment : Fragment() {
         onBoardingItemAdapter = OnBoardingItemAdapter(
             listOf(
                 OnBoardingItem(
-                    title = "First",
-                    description = "description1",
-                    animation = "loading_cats.json"
+                    title = "Stay Organized",
+                    description = "Create, categorize, and manage all your notes with ease.",
+                    animation = "problem_solving_team.json"
                 ),
                 OnBoardingItem(
-                    title = "Second",
-                    description = "description2",
-                    animation = "loading_cats.json"
+                    title = "Sync Across Devices",
+                    description = "Access your notes seamlessly on all your devices.",
+                    animation = "devices_sync.json"
                 ),
                 OnBoardingItem(
-                    title = "Third",
-                    description = "description3",
-                    animation = "loading_cats.json"
+                    title = "Boost Productivity",
+                    description = "Set reminders, search notes, and stay on top of your tasks.",
+                    animation = "productivity.json"
                 )
             )
         )
