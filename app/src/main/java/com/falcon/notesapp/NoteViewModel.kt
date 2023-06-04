@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.falcon.notesapp.models.NoteRequest
 import com.falcon.notesapp.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NoteViewModel @Inject constructor(private val noteRepository: NoteRepository): ViewModel() {
+@HiltViewModel
+class NoteViewModel @Inject constructor(
+    private val noteRepository: NoteRepository
+): ViewModel() {
 
     val notesLiveData get() = noteRepository.notesLiveData
     val statusLiveData get() = noteRepository.statusLiveData
