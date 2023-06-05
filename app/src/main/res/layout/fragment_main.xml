@@ -31,20 +31,52 @@
         app:layout_constraintTop_toBottomOf="@+id/app_title"
         />
 
-    <com.github.ybq.android.spinkit.SpinKitView
+
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/SpinKitView.Large.ThreeBounce"
-        android:visibility="gone"
         android:foregroundGravity="center"
+        android:visibility="gone"
         android:indeterminate="true"
+        app:lottie_rawRes="@raw/loading_cats"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:windowSoftInputMode="adjustResize"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/list_empty_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundGravity="center"
+        android:visibility="gone"
+        android:indeterminate="true"
+        app:lottie_rawRes="@raw/emptybox"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:windowSoftInputMode="adjustResize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        />
+    <TextView
+        android:id="@+id/nothingToDisplayText"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="50dp"
+        android:text="Nothing To Display"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_note"
         android:layout_width="wrap_content"

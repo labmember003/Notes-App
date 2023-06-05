@@ -71,6 +71,13 @@ class MainFragment : Fragment() {
             binding.progressBar.isVisible = false
             when (it) {
                 is NetworkResult.Success -> {
+                    if (it.data?.size == 0) {
+                        binding.listEmptyAnimation.isVisible = true
+                        binding.nothingToDisplayText.isVisible = true
+                    } else {
+                        binding.listEmptyAnimation.isVisible = false
+                        binding.nothingToDisplayText.isVisible = false
+                    }
                     adapter.submitList(it.data)
                 }
                 is NetworkResult.Error -> {
