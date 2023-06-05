@@ -50,7 +50,11 @@
         android:id="@+id/noteFragment"
         android:name="com.falcon.notesapp.NoteFragment"
         android:label="fragment_note"
-        tools:layout="@layout/fragment_note" />
+        tools:layout="@layout/fragment_note" >
+        <action
+            android:id="@+id/action_noteFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/firstFragment"
         android:name="com.falcon.notesapp.WalkThroughFragment"

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.falcon.notesapp.databinding.NoteItemBinding
 import com.falcon.notesapp.models.NoteResponse
 
-class NoteAdapter(): ListAdapter<NoteResponse, NoteAdapter.NoteViewHolder>(ComparatorDiffUtil()) {
+class NoteAdapter(private val onNoteClicked: (NoteResponse) -> Unit) : ListAdapter<NoteResponse, NoteAdapter.NoteViewHolder>(ComparatorDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteAdapter.NoteViewHolder {
         val binding = NoteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NoteViewHolder(binding)
@@ -27,7 +27,7 @@ class NoteAdapter(): ListAdapter<NoteResponse, NoteAdapter.NoteViewHolder>(Compa
             binding.noteTitle.text = note.title
             binding.noteDescription.text = note.description
             binding.root.setOnClickListener {
-
+                onNoteClicked(note)
             }
         }
     }

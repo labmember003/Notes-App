@@ -5,19 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.falcon.notesapp.adapters.NoteAdapter
 import com.falcon.notesapp.api.NotesAPI
 import com.falcon.notesapp.databinding.FragmentMainBinding
+import com.falcon.notesapp.models.NoteResponse
 import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +45,7 @@ class MainFragment : Fragment() {
             val response = notesAPI.getNotes()
             Log.i(TAG, response.body().toString())
         }
-        adapter = NoteAdapter()
+        adapter = NoteAdapter(::onNoteClicked)
         return binding.root
     }
 
@@ -54,6 +55,15 @@ class MainFragment : Fragment() {
         noteViewModel.getNotes()
         binding.notesList.adapter = adapter
         binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.addNote.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
+        }
+    }
+
+    private fun onNoteClicked(noteResponse: NoteResponse) {
+        val bundle = Bundle()
+        bundle.putString("note", Gson().toJson(noteResponse))
+        findNavController().navigate(R.id.action_mainFragment_to_noteFragment, bundle)
     }
 
     private fun bindObservers() {
