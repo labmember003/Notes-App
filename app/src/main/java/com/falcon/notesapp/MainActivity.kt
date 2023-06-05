@@ -31,10 +31,11 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if(destination.id == R.id.LoginFragment || destination.id == R.id.SignUpFragment
-                || destination.id == R.id.firstFragment || destination.id == R.id.mainFragment || destination.id == R.id.noteFragment) {
+                || destination.id == R.id.firstFragment  || destination.id == R.id.noteFragment
+                ) {
                 binding.toolbar.visibility = View.GONE
                 binding.fab.visibility = View.GONE
             } else {
@@ -54,7 +55,13 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                if (navController.currentDestination?.id == R.id.mainFragment) {
+                    navController.navigate(R.id.action_mainFragment_to_settingsFragment2)
+                }
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
