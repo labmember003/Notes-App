@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
                 binding.fab.visibility = View.GONE
             } else {
                 binding.toolbar.visibility = View.VISIBLE
+                binding.fab.visibility = View.GONE
             }
         }
     }

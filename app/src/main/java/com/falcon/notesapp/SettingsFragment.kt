@@ -10,10 +10,14 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.falcon.notesapp.utils.TokenManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
-
+    @Inject
+    lateinit var tokenManager: TokenManager
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         val preferenceContact = preferenceManager.findPreference<Preference>("contact")
@@ -32,8 +36,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         val preferenceLogout = preferenceManager.findPreference<Preference>("logout")
-        preference?.setOnPreferenceClickListener {
-//            findNavController().navigate()
+        preferenceLogout?.setOnPreferenceClickListener {
+            tokenManager.deleteToken()
+            findNavController().navigate(R.id.action_settingsFragment2_to_firstFragment)
+//            findNavController().popBackStack()
+//            findNavController().popBackStack()
             true
         }
     }

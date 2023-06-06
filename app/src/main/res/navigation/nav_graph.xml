@@ -82,5 +82,10 @@
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.falcon.notesapp.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment2_to_firstFragment"
+            app:destination="@id/firstFragment"
+            app:enterAnim="@anim/nav_default_enter_anim" />
+    </fragment>
 </navigation>
