@@ -1,34 +1,82 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory app:title="General"
+        app:iconSpaceReserved="false"
+        >
+        <Preference
+            app:key="contact"
+            app:title="Contact Us"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+    <PreferenceCategory app:title="About"
+        app:iconSpaceReserved="false"
+        >
+        <Preference
+            app:key="about"
+            app:title="The note-taking app for Android is a powerful tool designed to help users easily capture, organize, and retrieve their notes on-the-go. With its user-friendly interface and advanced features such as voice-to-text, image insertion, and synchronization across multiple devices, it is the perfect solution for anyone looking to stay organized and productive."
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+    <PreferenceCategory app:title="Developer"
+        app:iconSpaceReserved="false">
+        <Preference
+            app:key="bug"
+            app:title="Bug Report"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="resources"
+            app:title="Resources Used"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://sites.google.com/view/docx2pdf/resources-used"
+                />
+        </Preference>
+        <Preference
+            app:key="libraries"
+            app:title="Open Source Libraries"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            />
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+        <Preference
+            app:key="terms"
+            app:title="Terms And Conditions"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://sites.google.com/view/docx2pdf/terms-conditions"
+                />
+        </Preference>
+
+        <Preference
+            app:key="privacy"
+            app:title="Privacy Policy"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://sites.google.com/view/docx2pdf/home"
+                />
+        </Preference>
+
+        <Preference
+            app:key="logout"
+            app:title="Logout"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"
+            app:layout="@layout/preference_logout" />
+
+
 
     </PreferenceCategory>
 
