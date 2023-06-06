@@ -1,24 +1,19 @@
 package com.falcon.notesapp.login
 
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.falcon.notesapp.AuthViewModel
 import com.falcon.notesapp.R
-import com.falcon.notesapp.databinding.FragmentLoginBinding
 import com.falcon.notesapp.databinding.FragmentSignUpBinding
 import com.falcon.notesapp.models.UserRequest
-import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
 import com.falcon.notesapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @AndroidEntryPoint

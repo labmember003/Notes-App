@@ -1,12 +1,10 @@
 package com.falcon.notesapp.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.falcon.notesapp.api.UserAPI
 import com.falcon.notesapp.models.UserRequest
 import com.falcon.notesapp.models.UserResponse
-import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
 import org.json.JSONObject
 import retrofit2.Response

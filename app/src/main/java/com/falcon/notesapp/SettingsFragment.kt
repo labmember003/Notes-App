@@ -4,9 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -14,6 +13,7 @@ import com.falcon.notesapp.utils.TokenManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
     @Inject
@@ -37,13 +37,26 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         val preferenceLogout = preferenceManager.findPreference<Preference>("logout")
         preferenceLogout?.setOnPreferenceClickListener {
-            tokenManager.deleteToken()
-            findNavController().navigate(R.id.action_settingsFragment2_to_firstFragment)
-//            findNavController().popBackStack()
-//            findNavController().popBackStack()
+            logoutUser()
             true
         }
     }
+
+    private fun logoutUser() {
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        dialogBuilder.setMessage("Log out of your account ?")
+        dialogBuilder.setTitle("Logout")
+        dialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            tokenManager.deleteToken()
+            findNavController().navigate(R.id.action_settingsFragment2_to_firstFragment)
+        }
+        dialogBuilder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
     private fun composeEmail(subject: String) {
         val a = arrayOf("usarcompanion@gmail.com")
         val intent = Intent(Intent.ACTION_SENDTO).apply {
