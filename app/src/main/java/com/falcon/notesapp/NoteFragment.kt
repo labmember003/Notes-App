@@ -10,15 +10,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.falcon.notesapp.dao.NoteDatabase
 import com.falcon.notesapp.databinding.FragmentNoteBinding
 import com.falcon.notesapp.models.NoteRequest
 import com.falcon.notesapp.models.NoteResponse
 import com.falcon.notesapp.utils.NetworkResult
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
+
+    @Inject
+    lateinit var noteDatabase: NoteDatabase
+
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     private val noteViewModel by viewModels<NoteViewModel>()
@@ -60,7 +66,7 @@ class NoteFragment : Fragment() {
             if (note != null) {
                 noteViewModel.updateNote(note!!._id, noteRequest)
             } else {
-                Toast.makeText(requireContext(), title.isEmpty().toString() + description.isEmpty().toString(), Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), title.isEmpty().toString() + description.isEmpty().toString(), Toast.LENGTH_SHORT).show()
                 noteViewModel.createNode(noteRequest)
             }
         }
