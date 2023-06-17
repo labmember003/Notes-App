@@ -32,10 +32,11 @@ class NoteRepository @Inject constructor(private val notesAPI: NotesAPI) {
         }
     }
 
-    suspend fun createNote(noteRequest: NoteRequest) {
+    suspend fun createNote(noteRequest: NoteRequest): Response<NoteResponse> {
         _statusLiveData.postValue(NetworkResult.Loading())
         val response = notesAPI.createNote(noteRequest)
         handleResponse(response, "Note Created")
+        return response
     }
 
     suspend fun deleteNote(noteId: String) {

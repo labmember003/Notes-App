@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.falcon.notesapp.dao.NoteDatabase
 import com.falcon.notesapp.utils.TokenManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,6 +17,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
+
+    @Inject
+    lateinit var noteDatabase: NoteDatabase
+
     @Inject
     lateinit var tokenManager: TokenManager
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -47,6 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dialogBuilder.setMessage("Log out of your account ?")
         dialogBuilder.setTitle("Logout")
         dialogBuilder.setPositiveButton("Yes") { dialog, which ->
+            noteDatabase.clearAllTables()
             tokenManager.deleteToken()
             findNavController().navigate(R.id.action_settingsFragment2_to_firstFragment)
         }

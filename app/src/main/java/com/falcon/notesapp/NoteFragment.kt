@@ -59,7 +59,9 @@ class NoteFragment : Fragment() {
         }
         bindHandlers()
         bindObservers()
-        syncNotes()  // Update / Create / Delete
+        CoroutineScope(Dispatchers.IO).launch {
+            syncNotes()  // Update / Create / Delete
+        }
     }
 
     private fun syncDeletedNotes() {
@@ -71,7 +73,7 @@ class NoteFragment : Fragment() {
         }
     }
 
-    private fun syncNotes() {
+    private suspend fun syncNotes() {
         if (isNetworkAvailable(requireContext())) {
             syncDeletedNotes() // Handle Deleted Notes
 
@@ -95,10 +97,14 @@ class NoteFragment : Fragment() {
 
     }
 
-    private fun syncNewNotes(it: NoteResponse) {
-        TODO()
-//        TODO(COMPLETE THIS FUNCTION)
-        noteViewModel.createNode()
+    private suspend fun syncNewNotes(it: NoteResponse) {
+        val response = noteViewModel.createNode(NoteRequest(it.description, it.title))
+        val body = response.body()
+        it.__v = body?.__v ?: 0
+        it.userId = body?.userId.toString()
+        it._id = body?._id.toString()
+        it.updatedAt = body?.updatedAt.toString()
+        it.createdAt = body?.createdAt.toString()
     }
 
     private fun syncUpdatedNotes(it: NoteResponse) {

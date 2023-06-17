@@ -1,11 +1,11 @@
 package com.falcon.notesapp.models
 
 data class NoteResponse(
-    val __v: Int,
-    val _id: String,
-    val createdAt: String,
-    val description: String,
-    val title: String,
-    val updatedAt: String,
-    val userId: String
+    var __v: Int,
+    var _id: String,
+    var createdAt: String,
+    var description: String,
+    var title: String,
+    var updatedAt: String,
+    var userId: String
 )
