@@ -65,10 +65,9 @@ class NoteFragment : Fragment() {
     }
 
     private fun syncDeletedNotes() {
-        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getUnDeletedNotes()
+        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedNotes()
         val mappedDeletedNotesList = mapNoteEntityListToNoteResponseList(deletedNotesList)
         mappedDeletedNotesList.forEach {
-//            syncWithWeb(requireContext(), null, it, OPERATION.DELETE)
             noteViewModel.deleteNote(it._id)
         }
     }

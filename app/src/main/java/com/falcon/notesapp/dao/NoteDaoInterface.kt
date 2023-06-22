@@ -25,8 +25,8 @@ interface NoteDaoInterface {
     @Query("SELECT * FROM NoteEntity")
     fun getNotes(): LiveData<List<NoteEntity>>
 
-    @Query("SELECT * FROM NoteEntity WHERE isDeleted = 0")
-    fun getUnDeletedNotes(): List<NoteEntity>
+    @Query("SELECT * FROM NoteEntity WHERE isDeleted = 1")
+    fun getDeletedNotes(): List<NoteEntity>
 
     @Query("SELECT * FROM NoteEntity WHERE isSynced = 0")
     fun getUnsyncedNotes(): List<NoteEntity>
