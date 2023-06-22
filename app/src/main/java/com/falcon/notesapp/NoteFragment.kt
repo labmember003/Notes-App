@@ -1,5 +1,6 @@
 package com.falcon.notesapp
 
+import android.app.Activity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -7,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,10 +19,12 @@ import com.falcon.notesapp.models.NoteRequest
 import com.falcon.notesapp.models.NoteResponse
 import com.falcon.notesapp.utils.NetworkResult
 import com.falcon.notesapp.utils.TokenManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,25 +77,23 @@ class NoteFragment : Fragment() {
     private suspend fun syncNotes() {
         if (isNetworkAvailable(requireContext())) {
             syncDeletedNotes() // Handle Deleted Notes
-
             val unsyncedNotes: List<NoteEntity> = noteDatabase.noteDao().getUnsyncedNotes()
             val mappedUnsyncedNotesList = mapNoteEntityListToNoteResponseList(unsyncedNotes)
             mappedUnsyncedNotesList.forEach {
                 // check if it is case of create or update
                 if (it._id == "toBeUpdated") { // Create note waala case
-//                it
                     syncNewNotes(it)
-//                syncWithWeb(requireContext(), )
                 } else { // update note waala case
                     syncUpdatedNotes(it)
                 }
             }
         }
         else {
-            Toast.makeText(requireContext(), "Syncing Failed. Check Your Internet Connection", Toast.LENGTH_SHORT).show()
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(600)
+                showSnackBar("Syncing Failed. Check Your Internet Connection", activity)
+            }
         }
-
-
     }
 
     private suspend fun syncNewNotes(it: NoteResponse) {
@@ -123,22 +123,13 @@ class NoteFragment : Fragment() {
             isDetailsValid(title, description)
             val noteRequest = NoteRequest(description = description, title = title)
             if (note != null) {
-                noteViewModel.updateNote(note!!._id, noteRequest)
                 CoroutineScope(Dispatchers.IO).launch {
                     updateNoteInDatabase(note, noteRequest)
                 }
-                syncUpdatedNotes(note!!)
-//                syncWithWeb(requireContext(), noteRequest, note, OPERATION.UPDATE)
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     storeNoteInDatabase(noteRequest)
                 }
-//                syncWithWeb(requireContext(), noteRequest, null, OPERATION.CREATE)
-//                syncNewNotes()
-//                if (internet permissions are enabled then)
-//                noteViewModel.createNode(noteRequest)
-//                and make isSynced true
-//                noteViewModel.createNode(noteRequest)
             }
         }
     }
@@ -152,31 +143,12 @@ class NoteFragment : Fragment() {
         return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-//    private fun syncWithWeb(context: Context, noteRequest: NoteRequest?, note: NoteResponse?, operation: OPERATION) {
-//        if (isNetworkAvailable(context)) {
-//            when (operation) {
-//                OPERATION.DELETE -> {
-//                    noteViewModel.deleteNote(note!!._id)
-//                }
-//                OPERATION.CREATE -> {
-//                    noteViewModel.createNode(noteRequest!!)
-//                }
-//                else -> {
-//
-//                }
-//            }
-//        } else {
-//            Toast.makeText(requireContext(), "Net nhi hai bsdk", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
     private suspend fun updateNoteInDatabase(existingNote: NoteResponse?, noteRequest: NoteRequest) {
         val noteEntity = NoteEntity(existingNote!!.__v, existingNote._id, existingNote.createdAt,
                 description = noteRequest.description,
                 title = noteRequest.title,
                 existingNote.updatedAt, existingNote.userId, isSynced = false, isDeleted = false
             )
-
         noteDatabase.noteDao().updateNote(noteEntity)
     }
 
@@ -236,16 +208,18 @@ class NoteFragment : Fragment() {
     }
 
     private fun bindObservers() {
-        noteViewModel.statusLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    findNavController().popBackStack()
-                }
-                is NetworkResult.Error -> {
+        if (isNetworkAvailable(requireContext())) {
+            noteViewModel.statusLiveData.observe(viewLifecycleOwner) {
+                when (it) {
+                    is NetworkResult.Success -> {
+                        findNavController().popBackStack()
+                    }
+                    is NetworkResult.Error -> {
 
-                }
-                is NetworkResult.Loading -> {
+                    }
+                    is NetworkResult.Loading -> {
 
+                    }
                 }
             }
         }
@@ -263,5 +237,14 @@ class NoteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showSnackBar(message: String?, activity: Activity?) {
+        if (null != activity && null != message) {
+            Snackbar.make(
+                activity.findViewById(android.R.id.content),
+                message, Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 }

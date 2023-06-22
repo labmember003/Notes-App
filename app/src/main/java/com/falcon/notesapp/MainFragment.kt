@@ -2,11 +2,9 @@ package com.falcon.notesapp
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,18 +21,15 @@ import com.falcon.notesapp.dao.NoteDatabase
 import com.falcon.notesapp.dao.NoteEntity
 import com.falcon.notesapp.databinding.FragmentMainBinding
 import com.falcon.notesapp.models.NoteResponse
-import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 //  1.  Jo internet se data ayega, voh data base mei save kr diya old waala delete krke
 //  2. display the notes that are in database in rcv
