@@ -155,7 +155,6 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.i("nienvenvinv", "7")
         _binding = null
     }
 
