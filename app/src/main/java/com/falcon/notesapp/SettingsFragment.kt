@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -13,6 +14,9 @@ import com.falcon.notesapp.dao.NoteDatabase
 import com.falcon.notesapp.utils.TokenManager
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,7 +56,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dialogBuilder.setMessage("Log out of your account ?")
         dialogBuilder.setTitle("Logout")
         dialogBuilder.setPositiveButton("Yes") { dialog, which ->
-            noteDatabase.clearAllTables()
+            CoroutineScope(Dispatchers.IO).launch {
+                noteDatabase.clearAllTables()
+            }
             tokenManager.deleteToken()
             findNavController().navigate(R.id.action_settingsFragment2_to_firstFragment)
         }
