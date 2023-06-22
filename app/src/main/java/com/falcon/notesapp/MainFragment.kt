@@ -1,5 +1,10 @@
 package com.falcon.notesapp
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,10 +25,13 @@ import com.falcon.notesapp.databinding.FragmentMainBinding
 import com.falcon.notesapp.models.NoteResponse
 import com.falcon.notesapp.utils.Constants.TAG
 import com.falcon.notesapp.utils.NetworkResult
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Delay
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,8 +52,6 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private val noteViewModel by viewModels<NoteViewModel>()
 
-    //    TODO - HANDLE APP CRASHING WHEN NO INTERNET CONNECTION
-
     @Inject
     lateinit var notesAPI: NotesAPI
     private lateinit var adapter: NoteAdapter
@@ -54,18 +60,22 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = notesAPI.getNotes()
-            Log.i(TAG, response.body().toString())
-        }
         adapter = NoteAdapter(::onNoteClicked)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindObservers()
-        noteViewModel.getNotes()
+        if (isNetworkAvailable(requireContext())) {
+            bindObservers()
+            noteViewModel.getNotes()
+        } else {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(600)
+                showSnackBar("Failed To Fetch Notes", activity)
+            }
+
+        }
         binding.notesList.adapter = adapter
         binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.addNote.setOnClickListener {
@@ -145,6 +155,25 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i("nienvenvinv", "7")
         _binding = null
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    private fun showSnackBar(message: String?, activity: Activity?) {
+        if (null != activity && null != message) {
+            Snackbar.make(
+                activity.findViewById(android.R.id.content),
+                message, Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 }
