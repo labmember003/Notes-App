@@ -20,6 +20,7 @@ import com.falcon.notesapp.api.NotesAPI
 import com.falcon.notesapp.dao.NoteDatabase
 import com.falcon.notesapp.dao.NoteEntity
 import com.falcon.notesapp.databinding.FragmentMainBinding
+import com.falcon.notesapp.models.NoteRequest
 import com.falcon.notesapp.models.NoteResponse
 import com.falcon.notesapp.utils.NetworkResult
 import com.google.android.material.snackbar.Snackbar
@@ -76,7 +77,55 @@ class MainFragment : Fragment() {
         binding.addNote.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
         }
+        CoroutineScope(Dispatchers.IO).launch {
+            syncNotes()  // Update / Create / Delete
+        }
         displayData()
+    }
+
+    private suspend fun syncNotes() {
+        if (isNetworkAvailable(requireContext())) {
+            syncDeletedNotes() // Handle Deleted Notes
+            val unsyncedNotes: List<NoteEntity> = noteDatabase.noteDao().getUnsyncedNotes()
+            val mappedUnsyncedNotesList = mapNoteEntityListToNoteResponseList(unsyncedNotes)
+            mappedUnsyncedNotesList.forEach {
+                // check if it is case of create or update
+                if (it._id == "toBeUpdated") { // Create note waala case
+                    syncNewNotes(it)
+                } else { // update note waala case
+                    syncUpdatedNotes(it)
+                }
+            }
+        }
+        else {
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(600)
+                showSnackBar("Syncing Failed. Check Your Internet Connection", activity)
+            }
+        }
+    }
+
+    private fun syncDeletedNotes() {
+        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedNotes()
+        val mappedDeletedNotesList = mapNoteEntityListToNoteResponseList(deletedNotesList)
+        mappedDeletedNotesList.forEach {
+            noteViewModel.deleteNote(it._id)
+        }
+    }
+
+
+    private suspend fun syncNewNotes(it: NoteResponse) {
+        val response = noteViewModel.createNode(NoteRequest(it.description, it.title))
+        val body = response.body()
+        it.__v = body?.__v ?: 0
+        it.userId = body?.userId.toString()
+        it._id = body?._id.toString()
+        it.updatedAt = body?.updatedAt.toString()
+        it.createdAt = body?.createdAt.toString()
+    }
+
+    private fun syncUpdatedNotes(it: NoteResponse) {
+        noteViewModel.updateNote(it._id, NoteRequest(it.description, it.title))
     }
 
     private fun displayData() {

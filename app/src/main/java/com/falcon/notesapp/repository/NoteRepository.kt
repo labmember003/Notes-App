@@ -1,5 +1,6 @@
 package com.falcon.notesapp.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.falcon.notesapp.api.NotesAPI
@@ -33,6 +34,7 @@ class NoteRepository @Inject constructor(private val notesAPI: NotesAPI) {
     }
 
     suspend fun createNote(noteRequest: NoteRequest): Response<NoteResponse> {
+        Log.i("ffdddefnoeno", "fdfdf")
         _statusLiveData.postValue(NetworkResult.Loading())
         val response = notesAPI.createNote(noteRequest)
         handleResponse(response, "Note Created")
@@ -40,12 +42,14 @@ class NoteRepository @Inject constructor(private val notesAPI: NotesAPI) {
     }
 
     suspend fun deleteNote(noteId: String) {
+//        Log.i("ffdddefnoeno", "fdfdf")
         _statusLiveData.postValue(NetworkResult.Loading())
         val response = notesAPI.deleteNote(noteId)
         handleResponse(response, "Note Deleted")
     }
 
     suspend fun updateNote(noteId: String, noteRequest: NoteRequest) {
+        Log.i("ffdddefnoeno", "fdfdf")
         _statusLiveData.postValue(NetworkResult.Loading())
         val response = notesAPI.updateNote(noteId, noteRequest)
         handleResponse(response, "Note Updated")

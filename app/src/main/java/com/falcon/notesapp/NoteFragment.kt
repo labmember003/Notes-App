@@ -30,6 +30,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
+//    NOTES FRAGMENT MEI KOI NETWORK CALL NHI HOGI, ONLY DB CALLS
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -39,7 +40,7 @@ class NoteFragment : Fragment() {
 
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    private val noteViewModel by viewModels<NoteViewModel>()
+//    private val noteViewModel by viewModels<NoteViewModel>()
     private var note: NoteResponse? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,54 +61,7 @@ class NoteFragment : Fragment() {
             }
         }
         bindHandlers()
-        bindObservers()
-        CoroutineScope(Dispatchers.IO).launch {
-            syncNotes()  // Update / Create / Delete
-        }
-    }
-
-    private fun syncDeletedNotes() {
-        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedNotes()
-        val mappedDeletedNotesList = mapNoteEntityListToNoteResponseList(deletedNotesList)
-        mappedDeletedNotesList.forEach {
-            noteViewModel.deleteNote(it._id)
-        }
-    }
-
-    private suspend fun syncNotes() {
-        if (isNetworkAvailable(requireContext())) {
-            syncDeletedNotes() // Handle Deleted Notes
-            val unsyncedNotes: List<NoteEntity> = noteDatabase.noteDao().getUnsyncedNotes()
-            val mappedUnsyncedNotesList = mapNoteEntityListToNoteResponseList(unsyncedNotes)
-            mappedUnsyncedNotesList.forEach {
-                // check if it is case of create or update
-                if (it._id == "toBeUpdated") { // Create note waala case
-                    syncNewNotes(it)
-                } else { // update note waala case
-                    syncUpdatedNotes(it)
-                }
-            }
-        }
-        else {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(600)
-                showSnackBar("Syncing Failed. Check Your Internet Connection", activity)
-            }
-        }
-    }
-
-    private suspend fun syncNewNotes(it: NoteResponse) {
-        val response = noteViewModel.createNode(NoteRequest(it.description, it.title))
-        val body = response.body()
-        it.__v = body?.__v ?: 0
-        it.userId = body?.userId.toString()
-        it._id = body?._id.toString()
-        it.updatedAt = body?.updatedAt.toString()
-        it.createdAt = body?.createdAt.toString()
-    }
-
-    private fun syncUpdatedNotes(it: NoteResponse) {
-        noteViewModel.updateNote(it._id, NoteRequest(it.description, it.title))
+//        bindObservers()
     }
 
     private fun bindHandlers() {
@@ -179,7 +133,7 @@ class NoteFragment : Fragment() {
                 CoroutineScope(Dispatchers.IO).launch {
                     deleteNoteFromDB(note)
                 }
-//                syncWithWeb(requireContext(), null, note, OPERATION.DELETE)
+                findNavController().popBackStack()
             }
         }
         dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
@@ -208,23 +162,23 @@ class NoteFragment : Fragment() {
         return true
     }
 
-    private fun bindObservers() {
-        if (isNetworkAvailable(requireContext())) {
-            noteViewModel.statusLiveData.observe(viewLifecycleOwner) {
-                when (it) {
-                    is NetworkResult.Success -> {
-                        findNavController().popBackStack()
-                    }
-                    is NetworkResult.Error -> {
-
-                    }
-                    is NetworkResult.Loading -> {
-
-                    }
-                }
-            }
-        }
-    }
+//    private fun bindObservers() {
+//        if (isNetworkAvailable(requireContext())) {
+//            noteViewModel.statusLiveData.observe(viewLifecycleOwner) {
+//                when (it) {
+//                    is NetworkResult.Success -> {
+//                        findNavController().popBackStack()
+//                    }
+//                    is NetworkResult.Error -> {
+//
+//                    }
+//                    is NetworkResult.Loading -> {
+//
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private fun mapNoteEntityListToNoteResponseList(noteEntityList: List<NoteEntity>?): MutableList<NoteResponse> {
         val list: MutableList<NoteResponse> = emptyList<NoteResponse>().toMutableList()
