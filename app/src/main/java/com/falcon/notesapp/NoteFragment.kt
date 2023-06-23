@@ -131,6 +131,7 @@ class NoteFragment : Fragment() {
                     storeNoteInDatabase(noteRequest)
                 }
             }
+            findNavController().popBackStack()
         }
     }
 
