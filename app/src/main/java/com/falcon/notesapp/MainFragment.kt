@@ -33,6 +33,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 //  1.  Jo internet se data ayega, voh data base mei save kr diya old waala delete krke
+//  1a delete nhi krenge existing notes, bs add krdenge network waale notes db mei
+
+// Jo internet se data ayega, usko db mei with existing add krdenge, (CONDITION JO UNIQUE ID WAALE HONGE UNHE HE DB MEI ADD KIYA JAYEGA)
+// IN SBKA AB EK HE ILAJ HAI, AT A TIME EK DEVICE SE HE ACCOUNT ACCESS KR SKTE HO..
+/*
+    SERVER END PE EK BOOL VALUE RAKHLE, JEB BHI SIGNIN/ SIGNUP HOGA VOH BOOLEAN TRUE HO JAYEGA,
+    HMARI APP SIGN IN KRTE HUE USS BOOLEAN KO CHECK KREGI...IF TRUE HOGA VOH ALLOW NHI KRDEGA....BOLEGA DUSRE ACCIUNT SE LOGINED HO TUM....AUR WAHI OPTION DE DENGE KI DUSRE DEVICE SE LOGOUT KRVADE HUM? FIR VALUE FALSE HO JAYEGI;...FIR SIGN IN PE DUBARA TRUE KR DENGE
+
+ */
+
+
 //  2. display the notes that are in database in rcv
 //  3. jo add, update, del se data aaya (app mei add/ delete hua) usse database mei save kr liya, with isSynced false
 //  4. on each operation either delete update or edit call the sync function on whose isSyned is false

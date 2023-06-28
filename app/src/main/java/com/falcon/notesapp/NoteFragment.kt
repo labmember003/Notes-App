@@ -30,7 +30,16 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class NoteFragment : Fragment() {
-//    NOTES FRAGMENT MEI KOI NETWORK CALL NHI HOGI, ONLY DB CALLS
+    /*
+        NOTE NOTE NOTE NOTE NOTE NOTE
+        NOTE NOTE NOTE NOTE NOTE NOTE
+        NOTE NOTE NOTE NOTE NOTE NOTE
+        NOTE NOTE NOTE NOTE NOTE NOTE
+        NOTE NOTE NOTE NOTE NOTE NOTE
+
+        NOTES FRAGMENT MEI KOI NETWORK CALL NHI HOGI, ONLY DB CALLS
+     */
+
 
     @Inject
     lateinit var tokenManager: TokenManager
