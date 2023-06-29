@@ -1,5 +1,8 @@
 package com.falcon.notesapp.login
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,7 +18,7 @@ import com.falcon.notesapp.utils.NetworkResult
 import com.falcon.notesapp.utils.TokenManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
+// device id
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 
@@ -37,17 +40,25 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.loginPanel.setOnClickListener {
-            val validateResult = validateUserInput()
-            if (validateResult.first) {
-                binding.loginButton.visibility = View.GONE
-                binding.animationView.visibility = View.VISIBLE
-                binding.animationView.setAnimation("loading-dots.json")
-                binding.animationView.playAnimation()
-                authViewModel.loginUser(getUserRequest())
-            } else {
-                binding.errorTextview.text = validateResult.second
+            if (isNetworkAvailable(requireContext())) {
+                binding.errorTextview.visibility = View.INVISIBLE
+                val validateResult = validateUserInput()
+                if (validateResult.first) {
+                    binding.loginButton.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView.setAnimation("loading-dots.json")
+                    binding.animationView.playAnimation()
+                    authViewModel.loginUser(getUserRequest())
+                } else {
+                    binding.errorTextview.text = validateResult.second
+                    binding.errorTextview.visibility = View.VISIBLE
+                }
+            }
+            else {
+                binding.errorTextview.text = "Please check your internet connection to proceed with the user login."
                 binding.errorTextview.visibility = View.VISIBLE
             }
+
         }
         binding.registerNowTxt.setOnClickListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
@@ -90,5 +101,14 @@ class LoginFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

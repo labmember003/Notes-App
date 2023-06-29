@@ -1,5 +1,8 @@
 package com.falcon.notesapp.login
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,17 +44,25 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loginPanel.setOnClickListener {
-            val validateResult = validateUserInput()
-            if (validateResult.first) {
-                binding.loginButton.visibility = View.GONE
-                binding.animationView.visibility = View.VISIBLE
-                binding.animationView.setAnimation("loading-dots.json")
-                binding.animationView.playAnimation()
-                authViewModel.registerUser(getUserRequest())
-            } else {
-                binding.errorTextview.text = validateResult.second
+            if (isNetworkAvailable(requireContext())) {
+                binding.errorTextview.visibility = View.INVISIBLE
+                val validateResult = validateUserInput()
+                if (validateResult.first) {
+                    binding.loginButton.visibility = View.GONE
+                    binding.animationView.visibility = View.VISIBLE
+                    binding.animationView.setAnimation("loading-dots.json")
+                    binding.animationView.playAnimation()
+                    authViewModel.registerUser(getUserRequest())
+                } else {
+                    binding.errorTextview.text = validateResult.second
+                    binding.errorTextview.visibility = View.VISIBLE
+                }
+            }
+            else {
+                binding.errorTextview.text = "Please ensure a network connection is available for the registration process."
                 binding.errorTextview.visibility = View.VISIBLE
             }
+
         }
         binding.accountExistLL.setOnClickListener {
             findNavController().navigate(R.id.action_SignUpFragment_to_LoginFragment)
@@ -97,4 +108,12 @@ class SignUpFragment : Fragment() {
         _binding = null
     }
 
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities =
+            connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 }
