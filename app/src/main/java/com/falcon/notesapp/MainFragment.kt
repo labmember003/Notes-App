@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,9 +39,10 @@ import javax.inject.Inject
 // Jo internet se data ayega, usko db mei with existing add krdenge, (CONDITION JO UNIQUE ID WAALE HONGE UNHE HE DB MEI ADD KIYA JAYEGA)
 // IN SBKA AB EK HE ILAJ HAI, AT A TIME EK DEVICE SE HE ACCOUNT ACCESS KR SKTE HO..
 /*
-    SERVER END PE EK BOOL VALUE RAKHLE, JEB BHI SIGNIN/ SIGNUP HOGA VOH BOOLEAN TRUE HO JAYEGA,
-    HMARI APP SIGN IN KRTE HUE USS BOOLEAN KO CHECK KREGI...IF TRUE HOGA VOH ALLOW NHI KRDEGA....BOLEGA DUSRE ACCIUNT SE LOGINED HO TUM....AUR WAHI OPTION DE DENGE KI DUSRE DEVICE SE LOGOUT KRVADE HUM? FIR VALUE FALSE HO JAYEGI;...FIR SIGN IN PE DUBARA TRUE KR DENGE
-
+    SERVER END PE EK INT VALUE RKHENGE JO DEVICE SEND KREGA AT TIME OF LOGIN/REGISTRATION
+    AND AGER DEVICE JEB LOGIN KR RRHA HO USS POINT OF TIME PE VALUE NON ZERO THO LOGIN ALLOW NHI KREGA
+    AUR HAR LAUNCH PE SERVER VALUE AUR LOCAL VALUE CHECK KREGA...AGER SAME HAI THO PROCCEDD....VERNA UNDISMISSABLE DIALOGUE SAYING THAT
+    YOU LOGGED IN FROM ANOTHER FUCKING DEVICE
  */
 
 
@@ -99,7 +101,8 @@ class MainFragment : Fragment() {
             syncDeletedNotes() // Handle Deleted Notes
             val unsyncedNotes: List<NoteEntity> = noteDatabase.noteDao().getUnsyncedNotes()
             val mappedUnsyncedNotesList = mapNoteEntityListToNoteResponseList(unsyncedNotes)
-            mappedUnsyncedNotesList.forEach {
+            unsyncedNotes.forEach {
+//                noteEntityToNoteResponse()
                 // check if it is case of create or update
                 if (it._id == "toBeUpdated") { // Create note waala case
                     syncNewNotes(it)
@@ -116,27 +119,39 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun syncDeletedNotes() {
+    private suspend fun syncDeletedNotes() {
         val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedNotes()
         val mappedDeletedNotesList = mapNoteEntityListToNoteResponseList(deletedNotesList)
         mappedDeletedNotesList.forEach {
             noteViewModel.deleteNote(it._id)
         }
+        deletedNotesList.forEach {
+            noteDatabase.noteDao().deleteNote(it)
+        }
     }
 
 
-    private suspend fun syncNewNotes(it: NoteResponse) {
+    private suspend fun syncNewNotes(it: NoteEntity) {
         val response = noteViewModel.createNode(NoteRequest(it.description, it.title))
         val body = response.body()
-        it.__v = body?.__v ?: 0
+//        it.__v = body?.__v ?: 0
         it.userId = body?.userId.toString()
         it._id = body?._id.toString()
         it.updatedAt = body?.updatedAt.toString()
         it.createdAt = body?.createdAt.toString()
+
+        it.isSynced = true
+
+        noteDatabase.noteDao().updateNote(it)
+
     }
 
-    private fun syncUpdatedNotes(it: NoteResponse) {
+    private suspend fun syncUpdatedNotes(it: NoteEntity) {
         noteViewModel.updateNote(it._id, NoteRequest(it.description, it.title))
+
+        it.isSynced = true
+
+        noteDatabase.noteDao().updateNote(it)
     }
 
     private fun displayData() {
@@ -162,6 +177,10 @@ class MainFragment : Fragment() {
         return list
     }
 
+    private fun noteEntityToNoteResponse(noteEntity: NoteEntity): NoteResponse {
+        return NoteResponse(noteEntity.__v, noteEntity._id, noteEntity.createdAt, noteEntity.description, noteEntity.title, noteEntity.updatedAt, noteEntity.userId)
+    }
+
     private fun onNoteClicked(noteResponse: NoteResponse) {
         val bundle = Bundle()
         bundle.putString("note", Gson().toJson(noteResponse))
@@ -183,7 +202,7 @@ class MainFragment : Fragment() {
 //                    }
 //                    INSERTING DATA WHICH CAME FROM INTERNET INTO DATABASE
                     CoroutineScope(Dispatchers.IO).launch {
-                        updateDatabaseFromWeb(it.data)
+                        synchronizeListData(it.data)
                     }
 //                    adapter.submitList(it.data)
                 }
@@ -197,15 +216,25 @@ class MainFragment : Fragment() {
         })
     }
 
-    private suspend fun updateDatabaseFromWeb(data: List<NoteResponse>?) {
-        noteDatabase.clearAllTables()
+    private suspend fun synchronizeListData(data: List<NoteResponse>?) {
         data?.forEach {
-            val note = NoteEntity(it.__v, it._id, it.createdAt, it.description, it.title, it.updatedAt, it.userId,
-                isSynced = false,
-                isDeleted = false
-            )
-            noteDatabase.noteDao().insertNote(note)
+            Log.i("nimbumirchdhnaiya", noteDatabase.noteDao().checkEntryExists(it._id).toString())
+            Log.i("asdfghjkl", checkNoteExistenceInDB(it).toString())
+            if (!checkNoteExistenceInDB(it)) {
+                val note = NoteEntity(it.__v, it._id, it.createdAt, it.description, it.title, it.updatedAt, it.userId,
+                    isSynced = true,
+                    isDeleted = false
+                )
+                noteDatabase.noteDao().insertNote(note)
+            }
         }
+    }
+
+    private fun checkNoteExistenceInDB(note: NoteResponse): Boolean {
+        if (noteDatabase.noteDao().checkEntryExists(note._id) == 0) {
+            return false
+        }
+        return true
     }
 
     override fun onDestroyView() {

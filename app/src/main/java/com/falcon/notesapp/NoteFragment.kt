@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -141,8 +142,10 @@ class NoteFragment : Fragment() {
 //                noteViewModel.deleteNote(note._id)
                 CoroutineScope(Dispatchers.IO).launch {
                     deleteNoteFromDB(note)
+                    withContext(Dispatchers.Main) {
+                        findNavController().popBackStack()
+                    }
                 }
-                findNavController().popBackStack()
             }
         }
         dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
@@ -153,10 +156,18 @@ class NoteFragment : Fragment() {
     }
 
     private suspend fun deleteNoteFromDB(note: NoteResponse) {
-        val noteEntity = NoteEntity(note.__v, note._id, note.createdAt, note.description, note.title
-            , note.updatedAt, note.userId, isSynced = false, isDeleted = true
+        val noteEntity = NoteEntity(note!!.__v, note._id, note.createdAt,
+            description = note.description,
+            title = note.title,
+            note.updatedAt, note.userId, isSynced = false, isDeleted = true
         )
-        noteDatabase.noteDao().deleteNote(noteEntity)
+        noteDatabase.noteDao().updateNote(noteEntity)
+//        hum yaaha actual mei delete nhi krenge just because suppose:
+//        mai offline tha, maine kuch notes bnaye....fir mai online gya...notes sync ho gye
+//        then mai offline gya ...maine ek note delete kr diya
+//        ab mai online gya....tho online aur offline waali list add ho jayegi
+//        tho voh note jo delte ho chuka hai voh dubra aa jayega
+//        tho jeb server pe delete hoga uss point of time per he hum database se delete krenge
     }
 
     private fun isDetailsValid(title: String, description: String): Boolean {

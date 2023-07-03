@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Update
 import androidx.room.Delete
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
@@ -22,7 +23,7 @@ interface NoteDaoInterface {
     // update krke isSynced false krdega
     // aur isDeleted true
 
-    @Query("SELECT * FROM NoteEntity")
+    @Query("SELECT * FROM NoteEntity WHERE isDeleted = 0")
     fun getNotes(): LiveData<List<NoteEntity>>
 
     @Query("SELECT * FROM NoteEntity WHERE isDeleted = 1")
@@ -30,4 +31,12 @@ interface NoteDaoInterface {
 
     @Query("SELECT * FROM NoteEntity WHERE isSynced = 0")
     fun getUnsyncedNotes(): List<NoteEntity>
+
+    @Query("SELECT * FROM NoteEntity WHERE __v = :value")
+    fun getNoteById(value: Int): List<NoteEntity>
+
+    @Query("SELECT COUNT(*) FROM NoteEntity WHERE _id = :version")
+    fun checkEntryExists(version: String): Int
+
+
 }
