@@ -31,6 +31,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 //  1.  Jo internet se data ayega, voh data base mei save kr diya old waala delete krke
@@ -75,24 +77,28 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (isNetworkAvailable(requireContext())) {
-            bindObservers()
-            noteViewModel.getNotes()
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                delay(600)
-                showSnackBar("Failed To Fetch Notes", activity)
-            }
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                syncNotes() // DELETE CALL TO SERVER, DELETED ISDELETED = TRUE WAALE NOTES
+                if (isNetworkAvailable(requireContext())) {
+                    noteViewModel.getNotes() // GET CALL TO SERVER
+                } else {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(600)
+                        showSnackBar("Failed To Fetch Notes", activity)
+                    }
 
+                }
+            }
         }
         binding.notesList.adapter = adapter
         binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.addNote.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            syncNotes()  // Update / Create / Delete
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//              // Update / Create / Delete
+//        }
         displayData()
     }
 

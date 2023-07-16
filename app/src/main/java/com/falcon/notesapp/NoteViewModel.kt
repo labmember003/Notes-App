@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -23,7 +24,9 @@ class NoteViewModel @Inject constructor(
 
     fun getNotes() {
         viewModelScope.launch {
-            noteRepository.getNotes()
+            withContext(Dispatchers.IO) {
+                noteRepository.getNotes()
+            }
         }
     }
 
