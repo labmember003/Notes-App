@@ -77,20 +77,28 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        runBlocking {
-            withContext(Dispatchers.IO) {
-                syncNotes() // DELETE CALL TO SERVER, DELETED ISDELETED = TRUE WAALE NOTES
-                if (isNetworkAvailable(requireContext())) {
-                    noteViewModel.getNotes() // GET CALL TO SERVER
-                } else {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(600)
-                        showSnackBar("Failed To Fetch Notes", activity)
-                    }
-
+//        runBlocking {
+//
+//        }
+        CoroutineScope(Dispatchers.IO).launch {
+            syncNotes() // DELETE CALL TO SERVER, DELETED ISDELETED = TRUE WAALE NOTES
+            if (isNetworkAvailable(requireContext())) {
+                noteViewModel.getNotes() // GET CALL TO SERVER
+                withContext(Dispatchers.Main){
+                    bindObservers()
                 }
+                Log.i("testtesttest", "call gyi hai get notes ki")
+            } else {
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(600)
+                    showSnackBar("Failed To Fetch Notes", activity)
+                }
+
             }
         }
+
+
+        Log.i("testtesttest", "testtesttest")
         binding.notesList.adapter = adapter
         binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.addNote.setOnClickListener {
@@ -162,6 +170,7 @@ class MainFragment : Fragment() {
 
     private fun displayData() {
         noteDatabase.noteDao().getNotes().observe(viewLifecycleOwner) {
+            Log.i("testtesttest", it.size.toString())
             if (it.isEmpty()) {
                 binding.listEmptyAnimation.isVisible = true
                 binding.nothingToDisplayText.isVisible = true

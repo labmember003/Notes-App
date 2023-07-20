@@ -38,15 +38,11 @@ class NoteViewModel @Inject constructor(
         return response.await()
     }
 
-    fun updateNote(nodeId: String, noteRequest: NoteRequest) {
-        viewModelScope.launch {
-            noteRepository.updateNote(nodeId, noteRequest)
-        }
+    suspend fun updateNote(nodeId: String, noteRequest: NoteRequest) {
+        noteRepository.updateNote(nodeId, noteRequest)
     }
 
-    fun deleteNote(noteId: String) {
-        viewModelScope.launch {
-            noteRepository.deleteNote(noteId)
-        }
+    suspend fun deleteNote(noteId: String) {
+        noteRepository.deleteNote(noteId)
     }
 }
