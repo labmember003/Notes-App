@@ -134,16 +134,14 @@ class MainFragment : Fragment() {
     }
 
     private suspend fun syncDeletedNotes() {
-        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedNotes()
-        val mappedDeletedNotesList = mapNoteEntityListToNoteResponseList(deletedNotesList)
-        mappedDeletedNotesList.forEach {
-            noteViewModel.deleteNote(it._id)
-        }
+        val deletedNotesList: List<NoteEntity> = noteDatabase.noteDao().getDeletedUnsyncedNotes()
         deletedNotesList.forEach {
+            it.isSynced = true
+            noteDatabase.noteDao().updateNote(it)
+            noteViewModel.deleteNote(it._id)
             noteDatabase.noteDao().deleteNote(it)
         }
     }
-
 
     private suspend fun syncNewNotes(it: NoteEntity) {
         val response = noteViewModel.createNode(NoteRequest(it.description, it.title))

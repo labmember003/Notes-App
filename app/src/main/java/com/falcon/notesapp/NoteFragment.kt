@@ -41,7 +41,7 @@ class NoteFragment : Fragment() {
         NOTES FRAGMENT MEI KOI NETWORK CALL NHI HOGI, ONLY DB CALLS
      */
 
-
+    private val noteViewModel by viewModels<NoteViewModel>()
     @Inject
     lateinit var tokenManager: TokenManager
 
@@ -142,6 +142,9 @@ class NoteFragment : Fragment() {
 //                noteViewModel.deleteNote(note._id)
                 CoroutineScope(Dispatchers.IO).launch {
                     deleteNoteFromDB(note)
+                    if (isNetworkAvailable(requireContext())) {
+                        noteViewModel.deleteNote(note._id)
+                    }
                     withContext(Dispatchers.Main) {
                         findNavController().popBackStack()
                     }

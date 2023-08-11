@@ -38,5 +38,7 @@ interface NoteDaoInterface {
     @Query("SELECT COUNT(*) FROM NoteEntity WHERE _id = :version")
     fun checkEntryExists(version: String): Int
 
+    @Query("SELECT * FROM NoteEntity WHERE isDeleted = 1 AND isSynced = 0")
+    fun getDeletedUnsyncedNotes(): List<NoteEntity>
 
 }
