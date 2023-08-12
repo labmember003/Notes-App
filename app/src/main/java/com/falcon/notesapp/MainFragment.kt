@@ -1,6 +1,7 @@
 package com.falcon.notesapp
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -72,43 +74,65 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         adapter = NoteAdapter(::onNoteClicked)
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    isEnabled = false
+                    requireActivity().finish()
+                }
+            }
+            )
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        runBlocking {
-//
-//        }
-        CoroutineScope(Dispatchers.IO).launch {
-            syncNotes() // DELETE CALL TO SERVER, DELETED ISDELETED = TRUE WAALE NOTES
-            if (isNetworkAvailable(requireContext())) {
+        if (arguments?.getBoolean("isReturningFromDeleteNote") == true && isNetworkAvailable(requireContext())) {
+            CoroutineScope(Dispatchers.IO).launch {
+                noteDatabase.clearAllTables()
+            }
+            CoroutineScope(Dispatchers.IO).launch {
                 noteViewModel.getNotes() // GET CALL TO SERVER
                 withContext(Dispatchers.Main){
                     bindObservers()
                 }
-                Log.i("testtesttest", "call gyi hai get notes ki")
-            } else {
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(600)
-                    showSnackBar("Failed To Fetch Notes", activity)
-                }
-
             }
+            binding.notesList.adapter = adapter
+            binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            binding.addNote.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
+            }
+            displayData()
+        }
+        else {
+            CoroutineScope(Dispatchers.IO).launch {
+                syncNotes() // DELETE CALL TO SERVER, DELETED ISDELETED = TRUE WAALE NOTES
+                if (isNetworkAvailable(requireContext())) {
+                    noteViewModel.getNotes() // GET CALL TO SERVER
+                    withContext(Dispatchers.Main){
+                        bindObservers()
+                    }
+                    Log.i("testtesttest", "call gyi hai get notes ki")
+                } else {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(600)
+                        showSnackBar("Failed To Fetch Notes", activity)
+                    }
+
+                }
+            }
+            Log.i("testtesttest", "testtesttest")
+            binding.notesList.adapter = adapter
+            binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            binding.addNote.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
+            }
+            displayData()
         }
 
-
-        Log.i("testtesttest", "testtesttest")
-        binding.notesList.adapter = adapter
-        binding.notesList.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        binding.addNote.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_noteFragment)
-        }
-//        CoroutineScope(Dispatchers.IO).launch {
-//              // Update / Create / Delete
-//        }
-        displayData()
     }
+
 
     private suspend fun syncNotes() {
         if (isNetworkAvailable(requireContext())) {

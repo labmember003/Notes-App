@@ -95,7 +95,9 @@ class NoteFragment : Fragment() {
                     storeNoteInDatabase(noteRequest)
                 }
             }
-            findNavController().popBackStack()
+            val b = Bundle()
+            b.putBoolean("isReturningFromDeleteNote", false)
+            findNavController().navigate(R.id.action_noteFragment_to_mainFragment, b)
         }
     }
 
@@ -146,7 +148,9 @@ class NoteFragment : Fragment() {
                         noteViewModel.deleteNote(note._id)
                     }
                     withContext(Dispatchers.Main) {
-                        findNavController().popBackStack()
+                        val b = Bundle()
+                        b.putBoolean("isReturningFromDeleteNote", true)
+                        findNavController().navigate(R.id.action_noteFragment_to_mainFragment, b)
                     }
                 }
             }
