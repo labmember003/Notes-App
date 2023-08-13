@@ -2,6 +2,7 @@ package com.falcon.notesapp
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
@@ -98,6 +99,15 @@ class NoteFragment : Fragment() {
             val b = Bundle()
             b.putBoolean("isReturningFromDeleteNote", false)
             findNavController().navigate(R.id.action_noteFragment_to_mainFragment, b)
+        }
+        binding.shareButton.setOnClickListener {
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, "${binding.titleEditText.text} : \n${binding.descriptionEditText.text}")
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
     }
 
