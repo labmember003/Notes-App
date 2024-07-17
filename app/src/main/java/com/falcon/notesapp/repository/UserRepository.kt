@@ -1,5 +1,6 @@
 package com.falcon.notesapp.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.falcon.notesapp.api.UserAPI
@@ -33,6 +34,7 @@ class UserRepository @Inject constructor (private val userAPI: UserAPI) {
         if (response.isSuccessful && response.body() != null) {
             _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
+            Log.i("UserKiBilli", response.errorBody().toString())
             val errorObj = JSONObject(response.errorBody()!!.charStream().readText())
             _userResponseLiveData.postValue(NetworkResult.Error(errorObj.getString("message")))
         } else {
